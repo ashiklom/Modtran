@@ -1,4 +1,5 @@
-       SUBROUTINE DRIVER                                                 driv 100
+       SUBROUTINE DRIVER
+       use, intrinsic :: iso_fortran_env, only: input_unit
 
       include 'parameter.list'
       COMMON RELHUM(laydim),HSTOR(laydim),ICH(4),VH(17),TX(65),W(65)    driv 110
@@ -81,7 +82,7 @@ C*****IPR1 = OUTPUT OF MOLECULAR TRANSMITTANCE                          driv 650
       MAXGEO = laytwo
       small=    2.0    
 
-      IRD = 5
+      IRD = input_unit
       IPR = 6
       IPU = 7
       IPR1 = 8
@@ -124,7 +125,7 @@ c      OPEN (ISCRCH,FILE=outs)  ! ,FORM='UNFORMATTED')                      driv
 cjv  
 C                                                                       driv 770
 C
-      OPEN (28,FILE='refbkg',STATUS='OLD') 
+      OPEN (28,FILE='../data/refbkg',STATUS='OLD') 
 c
 C     ALTITUDE PARAMETERS                                               driv 780
 C                                                                       driv 790
