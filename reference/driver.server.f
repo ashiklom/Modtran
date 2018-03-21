@@ -1,4 +1,5 @@
        SUBROUTINE DRIVER                                                 driv 100
+
       include 'parameter.list'
       COMMON RELHUM(laydim),HSTOR(laydim),ICH(4),VH(17),TX(65),W(65)    driv 110
       COMMON IMSMX,WPATH(laythr,65),TBBY(laythr),PATM(laythr),NSPEC,     driv 130
@@ -18,7 +19,7 @@
 C     COMMON /CARD4/ V1,V2,DV                                           driv 270
       COMMON/CARD4/IV1,IV2,IDV,IFWHM                                    driv 280
       COMMON /CNSTNS/ PI,CA,DEG,GCAIR,BIGNUM,BIGEXP                     driv 290
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               driv 300
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               driv 300
       COMMON /MODEL/ ZM(LAYDIM),PM(LAYDIM),TM(LAYDIM),RFNDX(LAYDIM),
      1  DENSTY(65,LAYDIM),CLDAMT(LAYDIM),RRAMT(LAYDIM),EQLWC(LAYDIM),
      1  HAZEC(LAYDIM)
@@ -47,6 +48,7 @@ C     COMMON /CARD4/ V1,V2,DV                                           driv 270
      $     h2orat
       logical lfirst                                                    driv 530
       data lfirst/.true./                                               driv 540
+      integer :: ckmax
 c                                                                       driv 550
 cjd3 v
 c
@@ -71,6 +73,11 @@ C@    DOUBLE PRECISION HDATE,HTIME                                      driv 610
       DATA IRPT / 0 /                                                   driv 630
 C*****IRD, IPR, AND IPU ARE UNIT NUMBERS FOR INPUT, OUTPUT, AND         driv 640
 C*****IPR1 = OUTPUT OF MOLECULAR TRANSMITTANCE                          driv 650
+
+
+      CKMAX = KMAX
+
+
       MAXGEO = laytwo
       small=    2.0    
 
@@ -141,7 +148,7 @@ C     DESCRIPTION UNDER EXP FUNCTION IN "IBM SYSTEM 360/                driv 960
 C     AND SYSTEM 370 FORTRAN IV LANGUAGE"                               driv 970
 C     BIGNUM = 4.3E68                                                   driv 980
 C     BIGEXP = 174.6                                                    driv 990
-      KMAX=63                                                           driv1000
+!      KMAX=63                                                           driv1000
 C*****NL IS THE NUMBER OF BOUNDARIES IN THE STANDARD MODELS 1 TO 6      driv1010
 C*****BOUNDARY 34 (AT 99999 KM) IS NO LONGER USED                       driv1020
       NL = 33                                                           driv1030
@@ -1095,6 +1102,7 @@ C     A.E.R. 1986                                                       flxa 190
       DOUBLE PRECISION AER1,AER2,AERA,AERU,AERV,AERC,AERCX,EX1,EX2,     flxa 200
      $     DENO,DNMO,DNM1                                               flxa 210
       COMMON /IFIL/IRD,IPR,IPU,NPR,IPR1,ISCRCH
+
       include 'parameter.list'
       COMMON RELHUM(laydim),HSTOR(laydim),ICH(4),VH(17),TX(65),W(65)  
       COMMON IMSMX,WPATH(laythr,65),TBBY(laythr),PATM(laythr),NSPEC,   
@@ -1108,7 +1116,7 @@ C     A.E.R. 1986                                                       flxa 190
       COMMON /MODEL/ ZM(LAYDIM),PM(LAYDIM),TM(LAYDIM),RFNDX(LAYDIM),
      1  DENSTY(65,LAYDIM),CLDAMT(LAYDIM),RRAMT(LAYDIM),EQLWC(LAYDIM),
      1  HAZEC(LAYDIM)
-      COMMON/CNTRL/KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                 flxa 330
+      COMMON/CNTRL/CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                 flxa 330
       COMMON/SOLS/AH1(LAYTWO),ARH(LAYTWO),WPATHS(LAYTHR,65),
      1 PA(LAYTWO),PR(LAYTWO),ATHETA(LAYDIM+1),ADBETA(LAYDIM+1),
      2 LJ(LAYTWO+1),JTURN,ANGSUN,CSZEN(LAYTWO),TBBYS(LAYTHR,12),
@@ -1129,6 +1137,9 @@ C     A.E.R. 1986                                                       flxa 190
      3  UPFS(3,LAYDIM),DNFS(3,LAYDIM)  
       common/work/TAUM(3,laydim),TWGP(3,laydim),OMEGAK(laydim),
      $     DPJ(3,laydim),GKWJ(3,11),DPWJ(3,11),CP1S(11),dumdum(4066)
+     
+      integer :: ckmax
+      ckmax = kmax
 C                                                                       flxa 490
 C     INPUT PARAMETERS:                                                 flxa 500
 C     ----------------                                                  flxa 510
@@ -1477,8 +1488,11 @@ C        fdntrt IS THE DOWNWARD THERMAL FLUX AT THE SURFACE             flxa3860
       SUN=S0                                                            flxa4080
       RETURN                                                            flxa4090
       END                                                               flxa4100
+      
       SUBROUTINE TRANS(dis,nstr,uang,IPH,ISOURC,IDAY,ANGLEM,
      1  IRPT,ground,lsalb)
+     
+           INCLUDE 'parameter.list'
 cjd3 v changing call line
 cj      SUBROUTINE TRANS(IPH,ISOURC,IDAY,ANGLEM,IRPT,ground)
 
@@ -1486,8 +1500,8 @@ cjd3
 C
 C     CALCULATES TRANSMITTANCE AND RADIANCE VALUES BETWEEN IV1 AND IV2
 C     FOR A GIVEN ATMOSPHERIC SLANT PATH
-c
-      parameter(nbins=99,iprint=50,maxv=50000)                          tras 140
+! nbins=99,
+      parameter(iprint=50,maxv=50000)                         
 Clex
 Clex  Increase first dimension in SLIT to 65 to insure that all
 Clex  transmittances (tx array) are passed through the slit function.
@@ -1507,12 +1521,12 @@ c     Modtran has 65 as a magic number.  It INCLUDEs the usual 12 species
 c     plus a host of other species and sub species.  Many arrays have
 c     dimension 65.
 
-      INCLUDE 'parameter.list'
+
 C
 C     TRANS VARIABLES
 C
-      CHARACTER*8 CNAMEX
-      COMMON /NAMEX/CNAMEX(MMOLX)
+!      CHARACTER*8 CNAMEX
+!      COMMON /NAMEX/CNAMEX(MMOLX)
 Clex
 Clex  Remove unused commons
 Clex  COMMON /MDATAX/ WMOLXT(MMOLX,laydim)
@@ -1520,7 +1534,7 @@ Clex  COMMON /MODELX/ DNSTYX(MMOLX,LAYDIM)
 Clex  COMMON /NONAME/ TXX(MMOLX), WX(MMOLX), WPATHX(laythr,MMOLX)
 c
 c
-c
+
       LOGICAL IVTEST,loop0,ground,transm,modtrn
       COMMON RELHUM(LAYDIM),HSTOR(LAYDIM),ICH(4),VH(17),TX(65),W(65)
       COMMON IMSMX,WPATH(LAYTHR,65),TBBY(LAYTHR),PATM(LAYTHR),NSPEC,
@@ -1530,7 +1544,7 @@ c
      1  MODTRN
       COMMON/CARD4/IV1,IV2,IDV,IFWHM
       COMMON/CNSTNS/PI,CA,DEG,GCAIR,BIGNUM,BIGEXP
-      COMMON/CNTRL/KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT
+      COMMON/CNTRL/CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT
       COMMON/SOLS/AH1(LAYTWO),ARH(LAYTWO),WPATHS(LAYTHR,65),
      1 PA(LAYTWO),PR(LAYTWO),ATHETA(LAYDIM+1),ADBETA(LAYDIM+1),
      2 LJ(LAYTWO+1),JTURN,ANGSUN,CSZEN(LAYTWO),TBBYS(LAYTHR,12),
@@ -1553,6 +1567,8 @@ c        variables inserted by NORTH
         integer nstr
         logical dis
 c*******************************************
+      integer :: ckmax
+      ckmax = kmax
 cjd3 ^
 c     Initialize slit function array
       salbs = salb

@@ -972,7 +972,8 @@ C@    CALL CLOCK(GTIME)                                                 modt9650
 C@    HTIME=SHIFT(GTIME,6)                                              modt9660
 C@    RETURN                                                            modt9670
       END                                                               modt9680
-      SUBROUTINE STDMDL                                                 stdm 100
+      
+      SUBROUTINE STDMDL
       INCLUDE 'parameter.list'
 C***********************************************************************stdm 110
 C     THIS SUBROUTINE LOADS ONE OF THE 6 STANDARD ATMOSPHERIC PROFILES  stdm 120
@@ -1023,7 +1024,7 @@ C     COMMON /CARD4/ V1,V2,DV                                           stdm 230
       COMMON /MDATA1/ WNO(LAYDIM),WSO2(LAYDIM),WNO2(LAYDIM),
      x WNH3(LAYDIM),WAIR(LAYDIM)    
       COMMON /CNSTNS/ PI,CA,DEG,GCAIR,BIGNUM,BIGEXP                     stdm 290
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               stdm 300
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               stdm 300
       COMMON /DEAMT/ DENM(35,laytwo),DENP(35,laythr+1)
       COMMON /MLATM / ALT(50),PMATM(50,6),TMATM(50,6),AMOL(50,8,6)      
 C     XLOSCH = LOSCHMIDT'S NUMBER,MOLECULES CM-2,KM-1                   stdm 370
@@ -1034,10 +1035,14 @@ C     CON CONVERTS WATER VAPOR FROM GM M-3 TO MOLECULES CM-2 KM-1       stdm 400
 C     CONSTANTS FOR INDEX OF REFRACTION, AFTER EDLEN, 1965              stdm 420
       DATA A0/83.42/,A1/185.08/,A2/4.11/,                               stdm 430
      X     B1/1.140E5/,B2/6.24E4/,C0/43.49/,C1/1.70E4/                  stdm 440
+     
+      integer :: ckmax
+      ckmax = kmax
+
 C                                                                       stdm 450
-C     F(A) IS SATURATED WATER WAPOR DENSITY AT TEMP T,A=TZERO/T         stdm 460
-      F(A)=EXP(18.9766-14.9595*A-2.43882*A*A)*A                         stdm 470
-C                                                                       stdm 480
+C     F(A) IS SATURATED WATER WAPOR DENSITY AT TEMP T,A=TZERO/T         
+!      F(A) = EXP(18.9766-14.9595*A-2.43882*A*A)*A
+C                                                                       
 C     CONJOE=(1/XLOSCH)*1.E5*1.E-6 WITH                                 stdm 490
 C        1.E5 ARISING FROM CM TO KM CONVERSION AND                      stdm 500
 C        1.E-6  "       "  PPMV                                         stdm 510
@@ -1216,9 +1221,9 @@ c
 c         stuff the dnstyx array with the profile info for the
 c         extra species. that is the additional species beyond
 c         modtran's 12 regular species.
-          do 400 ix = 1,nspecx
+          do ix = 1,nspecx
              dnstyx(ix,i)=store*wmolxt(ix,i)
- 400      continue
+          enddo
 c
       ELSE                                                              stdm1910
 C  --- FOR H2O -----                                                    stdm1920
@@ -1846,7 +1851,7 @@ c
       COMMON /IFIL/IRD,IPR,IPU,NPR,IPR1,ISCRCH
       COMMON/CARD1/MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRNT,TBOUND,SALB,   
      1  MODTRN                                                          
-      COMMON/CNTRL/KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                 
+      COMMON/CNTRL/CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                 
       COMMON /PATH/PL(LAYTWO),QTHETA(LAYTWO),ITEST,HI,HF,
      1  AHT(LAYTWO),tph(LAYTWO)
       COMMON/SOLS/AH1(LAYTWO),ARH(LAYTWO),WPATHS(LAYTHR,65),
@@ -1881,6 +1886,9 @@ cj        parameter(maxumu=1 ,maxulv=34)
 c*******************************************
 
 cjd3 ^
+
+      integer :: ckmax
+      ckmax = kmax
 c                                                                       
 c     loop0 is .true. for first call from routine trans                 
       sumj = 0

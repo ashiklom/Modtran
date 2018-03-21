@@ -31,19 +31,17 @@ C       MXPHI  = Max no. of output azimuthal angles
 cj 7/26 need to make MXCLY and MXULV consistent with the parameterization
 cj      in MODTRAN3 by including parameter.list.
 c
-cj      PARAMETER ( MXCLY = 34, MXULV = 34, MXCMU = 16, MXUMU = 1,
-cj     $            MXPHI = 1, MI = MXCMU/2, MI9M2 = 9*MI-2,
-cj     $            NNLYRI = MXCMU*MXCLY )
-c
-         include 'parameter.list'
-c
-      PARAMETER (MXCLY =laydim, MXULV =laydim+1, MXCMU =16, MXUMU=1,
-     $            MXPHI = 1, MI = MXCMU/2, MI9M2 = 9*MI-2,
-     $            NNLYRI = MXCMU*MXCLY )
-c
-cj ^
+!      PARAMETER ( MXCLY = 34, MXULV = 34, MXCMU = 16, MXUMU = 1,
+!     $            MXPHI = 1, MI = MXCMU/2, MI9M2 = 9*MI-2,
+!     $            NNLYRI = MXCMU*MXCLY )
 
-C+---------------------------------------------------------------------+
+         include 'parameter.list'
+
+      PARAMETER (MXCLY =laydim, MXULV =laydim+1,  
+     $            MXPHI = 1,  MI9M2 = 9*MI-2,
+     $            NNLYRI = MXCMU*MXCLY )
+!                 MXCMU =16,MXUMU=1, MI = MXCMU/2,
+
 
       CHARACTER  HEADER*127
       LOGICAL  DELTAM, LAMBER, PLANK, ONLYFL, PRNT(7), USRANG, USRTAU

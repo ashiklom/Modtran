@@ -358,13 +358,16 @@ C                                                                       aerx 160
      1    RAINRT                                                        aerx 220
       COMMON /CARD3/ H1,H2,ANGLE,RANGE,BETA,RE,LEN                      aerx 230
 C     COMMON /CARD4/ V1,V2,DV                                           aerx 240
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               aerx 250
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               aerx 250
       COMMON /MODEL/ ZM(LAYDIM),PM(LAYDIM),TM(LAYDIM),RFNDX(LAYDIM),
      1  DENSTY(65,LAYDIM),CLDAMT(LAYDIM),RRAMT(LAYDIM),EQLWC(LAYDIM),
      1  HAZEC(LAYDIM)
       COMMON /AER/ EXTV(5),ABSV(5),ASYV(5)                              aerx 320
       COMMON /AERTM/TAER(5)                                             aerx 330
-C                                                                       aerx 340
+      
+      integer :: ckmax
+      ckmax = kmax
+
       DO 5 I=1,5                                                        aerx 350
       EXTV(I)=0.                                                        aerx 360
       ABSV(I)=0.                                                        aerx 370
@@ -421,8 +424,9 @@ C     WRITE (ipr,300) I,AWCCON(I)                                       aerx 860
 60    CONTINUE                                                          aerx 880
 100   FORMAT(5X,'IL,IK,EQL,EXTV=',2I5,1P5E12.5)                         aerx 890
       RETURN                                                            aerx 900
-      END                                                               aerx 910
-      SUBROUTINE AERNSM(JPRT,  GNDALT)                                  
+      END
+      
+      SUBROUTINE AERNSM(JPRT,  GNDALT)
       include 'parameter.list'
 C********************************************************************** 
 C     DEFINES ALTITUDE DEPENDENT VARIABLES Z,P,T,WH,WO AND HAZE         
@@ -480,7 +484,7 @@ c
       COMMON /CARD2D/ IREG(4),ALTB(4),IREGC(4)                          aern 310
       COMMON /CARD3/ H1,H2,ANGLE,RANGE,BETA,RE,LEN                      aern 320
 C     COMMON /CARD4/ V1,V2,DV                                           aern 330
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               aern 340
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               aern 340
       COMMON /MART/ RHH                                                 aern 350
       COMMON /MODEL/ ZMdl(LAYDIM),PM(LAYDIM),TM(LAYDIM),
      1  RFNDX(LAYDIM),DENSTY(65,LAYDIM),CLDAMT(LAYDIM),RRAMT(LAYDIM),
@@ -534,11 +538,14 @@ c
      1    16.043,31.999,30.01,64.06,46.01,17.03,63.01,17.00,20.01,      
      2    36.46,80.92,127.91,51.45,60.08,30.03,52.46,28.014,            
      3    27.03, 50.49, 34.01, 26.03, 30.07, 34.00, 7*0./               
-      DATA CLDTOP / 3.,3.,1.,2.,.66,1.,.66,.66,3.,3./                   
+      DATA CLDTOP / 3.,3.,1.,2.,.66,1.,.66,.66,3.,3./     
+      
+      integer :: ckmax
+      ckmax = kmax              
 C                                                                       
 C     F(A) IS SATURATED WATER WAPOR DENSITY AT TEMP T,A=TZERO/T         
 C                                                                       
-      F(A)=EXP(18.9766-14.9595*A-2.43882*A*A)*A                         
+!      F(A)=EXP(18.9766-14.9595*A-2.43882*A*A)*A                         
 C                                                                       
 C                                                                       
 C     ZMDL COMMON /MODEL/ FINAL ALTITUDE FOR LOWTRAN                    
@@ -1184,7 +1191,9 @@ C     ***************  END ERRATA
       RETURN                                                            
 C                                                                       
 925   FORMAT(//,' MODEL ATMOSPHERE NO. ',I5,' ICLD =',I5,//)            
-      END                                                               
+      END
+
+
       SUBROUTINE AERPRF (I,  VIS,HAZE,IHAZE,     ISEASN,IVULCN,N)       aerp 100
 C***********************************************************************aerp 110
 C     WILL COMPUTE DENSITY    PROFILES FOR AEROSOLS                     aerp 120
@@ -1265,8 +1274,13 @@ C***********************************************************************aerp 130
       COMMON IMSMX,WPATH(laythr,65),TBBY(laythr),PATM(laythr),NSPEC,   
      x KPOINT(12),ABSC(5,47),EXTC(5,47),ASYM(5,47),VX2(47),AWCCON(5)  
       COMMON /IFIL/IRD,IPR,IPU,NPR,IPR1,ISCRCH
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               aert 160
-      COMMON /AERTM/TAE7,TAE12,TAE13,TAE14,TAE16                        aert 170
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               aert 160
+      COMMON /AERTM/TAE7,TAE12,TAE13,TAE14,TAE16
+
+      integer :: ckmax
+      ckmax = kmax  
+      
+      
       SUM7  = 0.                                                        aert 180
       SUM12 = 0.                                                        aert 190
       SUM13 = 0.                                                        aert 200
@@ -1949,9 +1963,11 @@ C                                                                       bh2o 270
      C 0.        , 0.        , 0.        , 0.        , 0.        /      bh2o4680
       DATA F2001/                                                       bh2o4690
      C 0.        /                                                      bh2o4700
-C                                                                       bh2o4710
-      END                                                               bh2o4720
-      SUBROUTINE BMDATA(IV1,IFWHM,IDVX,IKMX,MXFREQ)                     bmdt 100
+
+      END
+
+
+      SUBROUTINE BMDATA(IV1,IFWHM,IDVX,IKMX,MXFREQ)
 C                                                                       bmdt 110
 C     BMDATA (CALLED BY TRANS) MAKES THE INITIAL BAND MODEL TAPE READ   bmdt 120
 C     AND CALCULATES WAVENUMBER-INDEPENDENT PARAMETERS FOR USE BY BMOD  bmdt 130
@@ -1991,9 +2007,8 @@ C
      $     PATMSX(laythr,MMOLX)
       DATA XTRAN/.TRUE./
       DATA ITBX/31/
-c
-c
-c
+
+
       LOGICAL MODTRN
       COMMON RELHUM(LAYDIM),HSTOR(LAYDIM),ICH(4),VH(17),TX(65),W(65)  
       COMMON IMSMX,WPATH(LAYTHR,65),TBBY(LAYTHR),PATM(LAYTHR),NSPEC,   
@@ -2005,7 +2020,7 @@ c
      3 PATMS(LAYTHR,12)
       COMMON/CARD1/MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRNT,TBOUND,SALB    bmdt 230
      1  ,MODTRN                                                         bmdt 240
-      COMMON/CNTRL/KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                 bmdt 250
+      COMMON/CNTRL/CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                 bmdt 250
       COMMON/BMDCOM/IBNDWD,IP,IPRM,IBLK,IBLOCK,IPARAM(273),NTEMP,       
      1  TBAND(5),SDZ(5,250),ODZ(5,250),IBIN(250),IMOL(250),IALF(250),   
      2  SD(5,mmolt2),OD(5,mmolt),ALF0(MMOLT),WT(laythr),
@@ -2014,7 +2029,10 @@ c
      4          DOPFAC(mmolt),DOP0(mmolt),DOPSUM(mmolt),
      $     COLSUM(mmolt),ODSUM(mmolt),SDSUM(mmolt2)                     cfc
       DIMENSION IFREQ(273)                                              bmdt 320
-      DATA TZERO/273.15/                                                bmdt 330
+      DATA TZERO/273.15/
+      
+      integer :: ckmax
+      ckmax = kmax
 C                                                                       bmdt 340
 C     OPEN THE UNFORMATTED BAND MODEL TAPE, FILE ITB = 9.  AN ERROR     bmdt 350
 C     OCCURS IF THE TAPE WAS OPENED DURING A PREVIOUS LOWTRAN RUN       bmdt 360
@@ -2193,8 +2211,10 @@ c
      $     5.04981E-07, 5.38245E-07, 5.79088E-07, 6.30907E-07,
      $     6.36486E-07, 4.32375E-07, 4.52709E-07, 4.76212E-07,
      $     5.99528E-07,6.65841E-07,5.83391E-07,4.7721E-07,5.69488E-07/
-      END                                                     
-      SUBROUTINE BMFLUX(IV,S0)                                          bmfx 100
+      END
+      
+      
+      SUBROUTINE BMFLUX(IV,S0)
       include 'parameter.list'
 C                                                                       bmfx 110
 C     MODTRAN VERSION OF FLXADD (NO K LOOP)                             bmfx 120
@@ -2204,9 +2224,9 @@ C     MODTRAN VERSION OF FLXADD (NO K LOOP)                             bmfx 120
       COMMON /IFIL/IRD,IPR,IPU,NPR,IPR1,ISCRCH
       COMMON/CARD1/MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRNT,TBOUND,SALB,   bmfx 170
      1  MODTRN                                                          bmfx 180
-      COMMON/TRAN/TMOLS(LAYDIM),TAERS(LAYDIM),TCONT(LAYDIM),
+      COMMON/TRAN/TMOLS(LAYDIM),TAsERS(LAYDIM),TCONT(LAYDIM),
      1  DCONT(LAYTWO)
-      COMMON/CNTRL/KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                 bmfx 200
+      COMMON/CNTRL/CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                 bmfx 200
       COMMON/SOLS/AH1(LAYTWO),ARH(LAYTWO),WPATHS(LAYTHR,65),
      1 PA(LAYTWO),PR(LAYTWO),ATHETA(LAYDIM+1),ADBETA(LAYDIM+1),
      2 LJ(LAYTWO+1),JTURN,ANGSUN,CSZEN(LAYTWO),TBBYS(LAYTHR,12),
@@ -2223,6 +2243,9 @@ C     MODTRAN VERSION OF FLXADD (NO K LOOP)                             bmfx 120
      1  TDF(LAYDIM),RUPC(LAYDIM),REF(LAYDIM),EDNS(LAYDIM),EUPS(LAYDIM),
      2  EUPCS(LAYDIM),TDFS(LAYDIM),RUPCS(LAYDIM),REFS(LAYDIM),
      3  UPFS(3,LAYDIM),DNFS(3,LAYDIM)  
+     
+      integer :: ckmax
+      ckmax = kmax
 C***********************************************************************bmfx 320
 C                                                                       bmfx 330
 C   INPUT PARAMETERS:                                                   bmfx 340
@@ -5105,7 +5128,7 @@ C                                                                       ci18 370
       COMMON RELHUM(laydim),HSTOR(laydim),ICH(4),VH(17),TX(65),W(65)  
       COMMON IMSMX,WPATH(laythr,65),TBBY(laythr),PATM(laythr),NSPEC,   
      x KPOINT(12),ABSC(5,47),EXTC(5,47),ASYM(5,47),VX2(47),AWCCON(5)  
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               ci18 480
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               ci18 480
 C     COMMON /CARD4/ V1,V2,DV                                           ci18 490
       COMMON /MODEL/ ZM(LAYDIM),PM(LAYDIM),TM(LAYDIM),RFNDX(LAYDIM),
      1  DENSTY(65,LAYDIM),CLDAMT(LAYDIM),RRAMT(LAYDIM),EQLWC(LAYDIM),
@@ -5121,6 +5144,10 @@ C                                                                       ci18 560
       DATA  CBASE2            /16.5,13.5,14.0, 9.5,10.0 /               ci18 600
       DATA  TSTAT             / 0.0,.291,.509,.655,.764,.837,.892,      ci18 610
      + 0.928, 0.960, 0.982, 1.00 /                                      ci18 620
+     
+      integer :: ckmax
+      ckmax = kmax
+      
       MDL = MODEL                                                       ci18 630
 C                                                                       ci18 640
 C  CHECK IF USER WANTS TO USE A THICKNESS VALUE HE PROVIDES             ci18 650
@@ -5206,7 +5233,7 @@ C                                                                       cius 500
       COMMON RELHUM(laydim),HSTOR(laydim),ICH(4),VH(17),TX(65),W(65)  
       COMMON IMSMX,WPATH(laythr,65),TBBY(laythr),PATM(laythr),NSPEC,   
      x KPOINT(12),ABSC(5,47),EXTC(5,47),ASYM(5,47),VX2(47),AWCCON(5)  
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               cius 600
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               cius 600
 C     COMMON /CARD4/ V1,V2,DV                                           cius 610
       COMMON /MODEL/  Z(LAYDIM),PM(LAYDIM),TM(LAYDIM),RFNDX(LAYDIM),
      1  DENSTY(65,LAYDIM),CLDAMT(LAYDIM),RRAMT(LAYDIM),EQLWC(LAYDIM),
@@ -5221,7 +5248,11 @@ C                                                                       cius 670
       DATA  CBASE2            /16.5,13.5,14.0, 9.5,10.0 /               cius 710
       DATA  TSTAT             / 0.0,.291,.509,.655,.764,.837,.892,      cius 720
      + 0.928, 0.960, 0.982, 1.00 /                                      cius 730
-C                                                                       cius 740
+
+
+      integer :: ckmax
+      ckmax = kmax
+      
 C  SET CIRRUS PROBABILITY AND PROFILE TO ALL ZEROES                     cius 750
 C                                                                       cius 760
       CPROB = 0.0                                                       cius 770
@@ -7496,7 +7527,7 @@ C                                                                       dpfl 550
      $  HAZEC(LAYDIM)
       COMMON /PARMTR/ RE,DELTAS,ZMAX,IMAX,IMOD,IBMAX,IPATH              dpfl 590
 C     COMMON /CNSTNS/ PI,CA,DEG,GCAIR,BIGNUM,BIGEXP                     dpfl 600
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               dpfl 610
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               dpfl 610
       COMMON /RFRPTH/ SPZP(LAYDIM+1),SPPP(LAYDIM+1),SPTP(LAYDIM+1),
      $ SPRFN(LAYDIM+1),SPSP(LAYDIM+1),SPPPSU(LAYDIM+1),SPTPSU(LAYDIM+1)
      $ ,SPRHOP(LAYDIM+1),SPDENP(65,LAYDIM+1),
@@ -7504,7 +7535,11 @@ C     COMMON /CNSTNS/ PI,CA,DEG,GCAIR,BIGNUM,BIGEXP                     dpfl 600
       COMMON /DPRFRP/ ZP(LAYDIM+1),PP(LAYDIM+1),TP(LAYDIM+1),
      $ RFNDXP(LAYDIM+1),SP(LAYDIM+1), PPSUM(LAYDIM+1),TPSUM(LAYDIM+1),
      $ RHOPSM(LAYDIM+1),DENP(65,LAYDIM+1), AMTP(65,LAYDIM+1) 
-      COMMON /SMALL2/LSMALL                                             dpfl 680
+      COMMON /SMALL2/LSMALL
+      
+      integer :: ckmax
+      ckmax = kmax
+      
       DO 9 I = 1, LAYDIM                                                    dpfl 690
          Z(I) = SPZ(I)                                                  dpfl 700
          P(I) = SPP(I)                                                  dpfl 710
@@ -7819,7 +7854,9 @@ C                                                                       dpfn1400
      $     10X,'CPATH   = ',F12.5,' KM',//,10X,'CT3     = ',F12.5,' KM',dpfn1490
      $     //,10X,'DC      = ',E12.3,' KM',//,                          dpfn1500
      $     10X,'HT3     = ',F12.5,' KM')                                dpfn1510
-      END                                                               dpfn1520
+      END
+
+
       SUBROUTINE DPLAYR(J,SINAI,COSAI,CPATH,SH,GAMMA,IAMT,S,BEND,       dpla 100
      $     RNG)                                                         dpla 110
       INCLUDE 'parameter.list'
@@ -7841,7 +7878,7 @@ C*****************************************************************      dpla 170
      $     RATIO3,COSAI3,X3,DX,W1,W2,W3,COSAI2,X2,D31,D32,D21,          dpla 270
      $     DSDX2,DSDX3,DS,DBEND,DSDZ,DHHP,DHRH,H3Z1,                    dpla 280
      $     DPRARF,DBNDX2,DBNDX3,RNG                                     dpla 290
-      INTEGER N,IMAX,IMOD,IBMAX,IPATH,KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,   dpla 300
+      INTEGER N,IMAX,IMOD,IBMAX,IPATH,M,IKMAX,NL,ML,IKLO,ISSGEO,   dpla 300
      $     IMULT,J,IAMT,K
       LOGICAL LSMALL                                                    dpla 320
 C                                                                       dpla 330
@@ -7861,7 +7898,7 @@ C     THAT IS, WITHOUT ANY PREFIXES.                                    dpla 460
 C                                                                       dpla 470
       COMMON /PARMTR/ RE,DELTAS,ZMAX,IMAX,IMOD,IBMAX,IPATH              dpla 480
       COMMON /CNSTNS/ PI,CA,DEG,GCAIR,BIGNUM,BIGEXP                     dpla 490
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               dpla 500
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               dpla 500
       COMMON /RFRPTH/ SPZP(LAYDIM+1),SPPP(LAYDIM+1),SPTP(LAYDIM+1),
      $     SPRFN(LAYDIM+1),SPSP(LAYDIM+1),
      $     SPPPSU(LAYDIM+1),SPTPSU(LAYDIM+1),SPRHOP(LAYDIM+1),
@@ -7898,6 +7935,10 @@ c
 C     DIMENSION HDEN(65),DENA(65),DENB(65)                              dpla 580
       DATA EPSILN/1.0E-5/                                               dpla 590
       data kmax2 /65/
+
+      integer :: ckmax
+      ckmax = kmax
+      
 C***  INITIALIZE LOOP                                                   dpla 600
       N = 0                                                             dpla 610
       Z1 = ZP(J)                                                        dpla 620
@@ -8196,7 +8237,7 @@ C***********************************************************************dpfp 240
       INTEGER IRD, IPR, IPU,NPR,IPR1,IMAX, IMOD,IBMAX,IPATH,            dpfp 260
      $     IHIGH,JA,KA,JD,J2A,J2B,ISSGEO,JO,JL,LEN,                     dpfp 270
      $     IAMT,ITEST,JTURN,IORDER,MAX,I,JNEXT,JHA,JMAX,                dpfp 280
-     $     J2,J,IHLOW,J1, KMAX,M,IKMAX,NL,ML,IKLO,IMULT                 dpfp 290
+     $     J2,J,IHLOW,J1,M,IKMAX,NL,ML,IKLO,IMULT                 dpfp 290
       logical lsmall, lprint                                            dpfp 300
       DOUBLE PRECISION ZP,PP,TP,RFNDXP,                                 dpfp 310
      $     SP,PPSUM,TPSUM,RHOPSM,DENP,AMTP                              dpfp 320
@@ -8236,7 +8277,7 @@ C     COMMON /CARD1/ MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRNT,TBOUND,SALB,Mdpfp 530
      1 PA(LAYTWO),PR(LAYTWO),ATHETA(LAYDIM+1),ADBETA(LAYDIM+1),
      2 LJ(LAYTWO+1),JTURN,ANGSUN,CSZEN(LAYTWO),TBBYS(LAYTHR,12),
      3 PATMS(LAYTHR,12)
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               dpfp 680
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               dpfp 680
       COMMON /PATH/PL(LAYTWO),QTHETA(LAYTWO),ITEST,HI,HF,
      1  AHT(LAYTWO),tph(LAYTWO)
       common /small1/dhalfr,dprng2                                      dpfp 700
@@ -8246,7 +8287,11 @@ C     COMMON /CARD1/ MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRNT,TBOUND,SALB,Mdpfp 530
       common /cprint/lprint                                             dpfp 740
       DIMENSION HLOW(2)                                                 dpfp 750
       CHARACTER*2 HLOW                                                  dpfp 760
-      DATA HLOW/'H1','H2'/                                              dpfp 770
+      DATA HLOW/'H1','H2'/
+      
+      integer :: ckmax
+      ckmax = kmax
+      
       if (lsmall) then                                                  dpfp 780
 c        if (lsmall) set h1 and h2 equal to double precision            dpfp 790
 c        values saved via common statements.                            dpfp 800
@@ -8644,7 +8689,9 @@ C                                                                       dsta1070
      4 0.5706, 0.5673, 0.8196, 0.8324, 0.8347, 0.8549, 0.7940, 0.8621,  dsta1330
      4 0.8588, 0.8918, 0.8922, 0.8407, 0.6488, 0.7557, 0.7021, 0.6024,  dsta1340
      4 0.5533, 0.5280, 0.5016, 0.4711, 0.4396, 0.4230, 0.4058/          dsta1350
-      END                                                               dsta1360
+      END
+      
+
       SUBROUTINE EQULWC                                                 eqwc 100
 CCC                                                                     eqwc 110
 CCC   EQUIVALENT LIQUID  WATER CONSTANTS FOR BEXT (0.55UM)=1.0KM-1      eqwc 120
@@ -8656,18 +8703,24 @@ CCC                                                                     eqwc 160
       COMMON RELHUM(laydim),HSTOR(laydim),ICH(4),VH(17),TX(65),W(65)  
       COMMON IMSMX,WPATH(laythr,65),TBBY(laythr),PATM(laythr),NSPEC,   
      x KPOINT(12),ABSC(5,47),EXTC(5,47),ASYM(5,47),VX2(47),AWCCON(5)  
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISS,IMULT                  eqwc 210
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISS,IMULT                  eqwc 210
       COMMON /MODEL/ ZM(LAYDIM),PM(LAYDIM),TM(LAYDIM),RFNDX(LAYDIM),
      1  DENSTY(65,LAYDIM),CLDAMT(LAYDIM),RRAMT(LAYDIM),EQLWC(LAYDIM),
      1  HAZEC(LAYDIM)
-      DO 140 I=1,ML                                                     eqwc 240
+     
+      integer :: ckmax
+      ckmax = kmax
+      
+      DO I=1,ML
       IF(DENSTY(7,I).NE.0.0) EQLWC(I)=DENSTY(7,I)*AWCCON(1)             eqwc 250
       IF(DENSTY(12,I).NE.0.0) EQLWC(I)=DENSTY(12,I)*AWCCON(2)           eqwc 260
       IF(DENSTY(13,I).NE.0.0) EQLWC(I)=DENSTY(13,I)*AWCCON(3)           eqwc 270
       IF(DENSTY(14,I).NE.0.0) EQLWC(I)=DENSTY(14,I)*AWCCON(4)           eqwc 280
-140   CONTINUE                                                          eqwc 290
-      RETURN                                                            eqwc 300
-      END                                                               eqwc 310
+      enddo
+
+      END
+
+
       SUBROUTINE EXABIN                                                 exab 100
       include 'parameter.list'
 C                                                                       exab 110
