@@ -423,8 +423,21 @@ C     WRITE (ipr,300) I,AWCCON(I)                                       aerx 860
 300   FORMAT(5X,'I,AWCCON=',I5,5X,1PE12.5)                              aerx 870
 60    CONTINUE                                                          aerx 880
 100   FORMAT(5X,'IL,IK,EQL,EXTV=',2I5,1P5E12.5)                         aerx 890
-      RETURN                                                            aerx 900
+
       END
+      
+
+      pure real function F(A)
+      
+      real, intent(in) :: A
+      
+      !     F(A) IS SATURATED WATER WAPOR DENSITY AT TEMP T,A=TZERO/T         
+                                                                       
+      F = EXP(18.9766-14.9595*A-2.43882*A*A)*A 
+      
+      end function F        
+      
+      
       
       SUBROUTINE AERNSM(JPRT,  GNDALT)
       include 'parameter.list'
@@ -543,9 +556,7 @@ c
       integer :: ckmax
       ckmax = kmax              
 C                                                                       
-C     F(A) IS SATURATED WATER WAPOR DENSITY AT TEMP T,A=TZERO/T         
-C                                                                       
-!      F(A)=EXP(18.9766-14.9595*A-2.43882*A*A)*A                         
+                    
 C                                                                       
 C                                                                       
 C     ZMDL COMMON /MODEL/ FINAL ALTITUDE FOR LOWTRAN                    
@@ -2224,7 +2235,7 @@ C     MODTRAN VERSION OF FLXADD (NO K LOOP)                             bmfx 120
       COMMON /IFIL/IRD,IPR,IPU,NPR,IPR1,ISCRCH
       COMMON/CARD1/MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRNT,TBOUND,SALB,   bmfx 170
      1  MODTRN                                                          bmfx 180
-      COMMON/TRAN/TMOLS(LAYDIM),TAsERS(LAYDIM),TCONT(LAYDIM),
+      COMMON/TRAN/TMOLS(LAYDIM),TAERS(LAYDIM),TCONT(LAYDIM),
      1  DCONT(LAYTWO)
       COMMON/CNTRL/CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                 bmfx 200
       COMMON/SOLS/AH1(LAYTWO),ARH(LAYTWO),WPATHS(LAYTHR,65),
@@ -7450,16 +7461,18 @@ cj
       X = X1*(X2/X1)**A                                                 dpex 170
       RETURN                                                            dpex 180
   100 X = X1+(X2-X1)*A                                                  dpex 190
-      RETURN                                                            dpex 200
-      END                                                               dpex 210
-      SUBROUTINE DPFILL(HA,HB,JNEXT)                                    dpfl 100
+
+      END
+      
+     
+      SUBROUTINE DPFILL(HA,HB,JNEXT)
 C********************************************************************   dpfl 110
 C     THIS SUBROUTINE DEFINES THE ATMOSPHERIC BOUNDARIES OF THE PATH    dpfl 120
 C     FROM HA TO HB AND INTERPOLATES (EXTRAPOLATES) THE DENSITIES TO    dpfl 130
 C     THESE BOUNDARIES ASSUMING THE DENSITIES VARY EXPONENTIALLY        dpfl 140
 C     WITH HEIGHT                                                       dpfl 150
 C********************************************************************   dpfl 160
-      INTEGER IRD, IPR, IPU, NPR, IPR1, KMAX, M, IKMAX, NL, ML,IKLO,    dpfl 170
+      INTEGER IRD, IPR, IPU, NPR, IPR1, M, IKMAX, NL, ML,IKLO,    dpfl 170
      $     ISSGEO, IMULT,                                               dpfl 180
      $     I, J, JNEXT,IA,IB,I2,IPATH,IMAX,IMOD,IBMAX,K,I1              dpfl 190
       LOGICAL LSMALL                                                    dpfl 200

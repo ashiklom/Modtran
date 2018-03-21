@@ -170,6 +170,8 @@ C     GAMFOG=8.1888*FREQ*RHO*AIMAG( -  (CINDEX**2-1)/(CINDEX**2+2))     gmfg 410
       GAMFOG=1.885 *FREQ*RHO*AIMAG( -  (CINDEX**2-1)/(CINDEX**2+2))     gmfg 420
       RETURN                                                            gmfg 430
       END                                                               gmfg 440
+      
+      
       SUBROUTINE GEO(IERROR,BENDNG,MAXGEO,MSOFF)                        geo  110
       INCLUDE 'parameter.list'
 C*********************************************************************  geo  120
@@ -252,7 +254,7 @@ c                                                                       geo  480
       COMMON /CARD3/ H1,H2,ANGLE,RANGE,BETA,REE,LEN                     geo  600
 C     COMMON /CARD4/ V1,V2,DV                                           geo  610
       COMMON /CNSTNS/ PI,CA,DEG,GCAIR,BIGNUM,BIGEXP                     geo  620
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               geo  630
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               geo  630
       COMMON /MODEL/ ZM(LAYDIM),PM(LAYDIM),TM(LAYDIM),RFNDX(LAYDIM),
      1  DENSTY(65,LAYDIM),CLDAMT(LAYDIM),RRAMT(LAYDIM),EQLWC(LAYDIM),
      1  HAZEC(LAYDIM)
@@ -284,7 +286,11 @@ cssi  COMMON /GRoUND/GNDALT                                             geo  830
 c
 C*****KMOL(K) IS A POINTER USED TO REORDER THE AMOUNTS WHEN PRINTING    geo  930
       DATA KMOL/1,2,3,11,8,5,9,10,4,6,7,12,13,14,16,15,17/              GEO  940
-C
+
+
+      integer :: ckmax
+      ckmax = kmax
+      
       LSMALL = .FALSE.                                                  geo  890
       LPRINT = .TRUE.                                                   geo  900
       LNOGEO = .FALSE.                                                  geo  910
@@ -1660,13 +1666,16 @@ C     DRX = DERIVATIVE                                                  irfx 160
 C     RATIO = RX/DRX                                                    irfx 170
 C                                                                       irfx 180
       DOUBLE PRECISION  X, RX, RATIO, XN, H                             irfx 190
-      INTEGER I, J, KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                irfx 200
+      INTEGER I, J,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                irfx 200
 C                                                                       irfx 210
       COMMON /MODEL/ ZM(LAYDIM),PM(LAYDIM),TM(LAYDIM),RFNDX(LAYDIM),
      1  DENSTY(65,LAYDIM),CLDAMT(LAYDIM),RRAMT(LAYDIM),EQLWC(LAYDIM),
      1  HAZEC(LAYDIM)
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               irfx 240
-C                                                                       irfx 250
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               irfx 240
+
+      integer :: ckmax
+      ckmax = kmax
+      
       IF (X .GT. ZM(ML)) THEN                                           irfx 260
          J = ML                                                         irfx 270
          GO TO 200                                                      irfx 280
@@ -1795,7 +1804,7 @@ C                                                                       layv 110
 C     RETURNS HAZE FOR VSA OPTION                                       layv 120
 C                                                                       layv 130
       include 'parameter.list'
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               layv 140
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               layv 140
       COMMON /MODEL/   Z(LAYDIM),PM(LAYDIM),TM(LAYDIM),RFNDX(LAYDIM),
      1  DENSTY(65,LAYDIM),CLDAMT(LAYDIM),RRAMT(LAYDIM),EQLWC(LAYDIM),
      1  HAZEC(LAYDIM)
@@ -1810,8 +1819,11 @@ C                                                                       layv 130
      x WNH3(laydim),WAIR(laydim)    
       COMMON /ZVSALY/ ZVSA(10),RHVSA(10),AHVSA(10),IHVSA(10)            layv 260
       COMMON /IFIL/IRD,IPR,IPU,NPR,IPR1,ISCRCH
-C                                                                       layv 280
-      DIMENSION ZNEW(laydim)                                            layv 290
+
+      DIMENSION ZNEW(laydim)
+      integer :: ckmax
+      ckmax = kmax
+      
       RH=0.                                                             layv 300
       AHAZE=0                                                           layv 310
       IHA1=0                                                            layv 320
@@ -2223,8 +2235,10 @@ CCC   RAIN MODELS 1-5                                                   mdta 420
       DATA RR6/ 16*0.0/                                                 mdta 490
       DATA RR7/ 16*0.0/                                                 mdta 500
 C     DATA CO2       /                                                  mdta 510
-      END                                                               mdta 520
-      BLOCK DATA MLATMB                                                 mlat 100
+      END
+      
+      
+      BLOCK DATA MLATMB
 C>    BLOCK DATA                                                        mlat 110
 C***********************************************************************mlat 120
 C     THIS SUBROUTINE INITIALIZES THE 6 BUILT-IN ATMOSPHERIC PROFILES   mlat 130
@@ -3191,7 +3205,9 @@ C     DATA DENSITY   /                                                  mlat6780
      C  1.00E-14,  1.00E-14,  1.00E-14,  1.00E-14,  1.00E-14,           mlat9740
      C  1.00E-14,  1.00E-14,  1.00E-14,  1.00E-14,  1.00E-14,           mlat9750
      C  1.00E-14,  1.00E-14,  1.00E-14,  1.00E-14,  1.00E-14/           mlat9760
-      END                                                               mlat9770
+      END BLOCK DATA MLATMB
+      
+      
         subroutine msrad(dis,uang,nstr,iv,v,isourc,iday,
      2     anglem,s0cms,t0cms)
 cjd3  SUBROUTINE MSRAD(IV,V,ISOURC,IDAY,ANGLEM)
@@ -3209,7 +3225,7 @@ C                                 A.E.R. 1986
      1  MODTRN
       COMMON/CARD2/IHAZE,ISEASN,IVULCN,ICSTL,ICLD,IVSA,VIS,WSS,WHH,
      1    RAINRT
-      COMMON/CNTRL/KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT
+      COMMON/CNTRL/CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT
       INCLUDE 'parameter.list'
       COMMON RELHUM(LAYDIM),HSTOR(LAYDIM),ICH(4),VH(17),TX(65),W(65)  
       COMMON IMSMX,WPATH(LAYTHR,65),TBBY(LAYTHR),PATM(LAYTHR),NSPEC,   
@@ -3262,6 +3278,8 @@ cj
      8        wn0,uang,t0cms(maxumu,maxulv)
 c*********************************************************
 
+      integer :: ckmax
+      ckmax = kmax
 cjd3 
       IKMAX=IKMAX+1
       IKM=IKMAX-1
@@ -7238,8 +7256,10 @@ C     CALL THE APPROPRIATE PHASE FUNCTION                               pf   110
       COMMON/MNMPHS/ MNUM(27,26),PHSFNC(34,70)                          pf   120
       M=MNUM(I,NN)                                                      pf   130
       PF=PHSFNC(J,M)                                                    pf   140
-      RETURN                                                            pf   150
-      END                                                               pf   160
+
+      END
+      
+      
       SUBROUTINE PHASEF(V,ALT,SANGLE,RH,PHFA)                           phaf 100
       include 'parameter.list'
 c                                                                       phaf 110
@@ -7270,7 +7290,7 @@ C     25=ADVECTIVE FOG   26=METEORIC DUST                               phaf 350
 C                                                                       phaf 360
 C     IN THE PRESENT VERSION THE 4 OCEANIC MODELS 13-16                 phaf 370
 C     ARE NOT UTILIZED.                                                 phaf 380
-      COMMON/CNTRL/KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT    
+      COMMON/CNTRL/CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT    
       COMMON /IFIL/IRD,IPR,IPU,NPR,IPR1,ISCRCH
       COMMON/CNSTNS/PI,CA,DEG,GCAIR,BIGNUM,BIGEXP                       phaf 400
       COMMON /CARD1/ MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRNT,TBOUND,SALB  phaf 410
@@ -7291,7 +7311,11 @@ C     ARE NOT UTILIZED.                                                 phaf 380
      2  150.,155.,160.,165.,170.,175.,180./                             phaf 550
       DATA WAVE/.2,.3,.55,.6943,1.06,1.536,2.0,2.5,2.7,3.,3.2,3.39,5.,  phaf 560
      1  6.,7.2,7.9,8.7,9.2,10.0,10.59,12.5,15.0,17.2,18.5,21.3,30.,40./ phaf 570
-      DATA RHPTS /0.,70.,80.,99./                                       phaf 580
+      DATA RHPTS /0.,70.,80.,99./ 
+
+      integer :: ckmax
+      ckmax = kmax
+      
       PHFA=0.                                                           phaf 590
       ALAM=1.E4/(V+1.e-5)                                               phaf 600
       IF(SANGLE.LT.0. .OR. SANGLE.GT.180.)GOTO900                       phaf 610
@@ -8095,7 +8119,9 @@ C     COMMON/MNMPHS/ MNUM(27,26),PHSFNC(34,70)                          phsd 160
      C      .00407,      .00377,      .00368,      .00363,      .00360, phsd6430
      C      .00359,      .00360,      .00361,      .00363,      .00365, phsd6440
      C      .00366,      .00367,      .00367,      .00369/              phsd6450
-      END                                                               phsd6460
+      END
+      
+      
       subroutine rhoeps (iv,ibkg,salb,bkeps)
 c
 c     jun 93
@@ -8256,10 +8282,10 @@ c
         print*,' v salb ',v,salb
         stop
       endif
-c
-c
-      return
-      end
+
+      end subroutine rhoeps
+      
+      
       BLOCK DATA PRFDTA                                                 prfd 100
 C>    BLOCK DATA                                                        prfd 110
 C                                                                       prfd 120
@@ -8354,7 +8380,9 @@ CCC           EXUPAT=EXTREME UPPER ATMOSPHERIC                          prfd 320
       DATA EXUPAT       /26*0.,                                         prfd1010
      1 3.32E-05, 4.25E-05, 5.59E-05, 6.60E-05, 5.04E-05, 1.03E-05,      prfd1020
      2 4.50E-07, 0.      /                                              prfd1030
-      END                                                               prfd1040
+      END  BLOCK DATA PRFDTA 
+      
+      
       FUNCTION   PSI(PSIO,DELO,BETA,IARB,IARBO)                         psi  100
 C                                                                       psi  110
 C     FUNCTION PSI RETURNS THE VALUE OF SOLAR AZIMUTH RELATIVE TO       psi  120
@@ -8417,8 +8445,9 @@ C     NOTE ATAN RETURNS ARGUMENTS BETWEEN -90 AND 90, PSI               psi  670
 C     AND PSIO SHOULD BE OF THE SAME SIGN.                              psi  680
       IF(PSIO.GT.0.0.AND.PSI.LT.0.0) PSI=PSI+180.                       psi  690
       IF(PSIO.LT.0.0.AND.PSI.GT.0.0) PSI=PSI-180.                       psi  700
-      RETURN                                                            psi  710
-      END                                                               psi  720
+
+      END FUNCTION   PSI
+      
 cjv 11/95 Replace subroutine PSIDEL with PSIECA.
       SUBROUTINE PSIECA(OLAT,OLONG,SLAT,SLONG,PSI,ECA)
 C
@@ -8529,13 +8558,15 @@ C        MUST BE CASE 2D; ALSO BETA CANNOT BE ZERO FOR 2D               pslc 510
 C        IF RANGE AND BETA BOTH ARE ZERO, CASE 2A                       pslc 540
          ISLCT = 21                                                     pslc 550
       ENDIF                                                             pslc 560
-      RETURN                                                            pslc 570
-      END                                                               pslc 580
+
+      END
+
+
       SUBROUTINE ratcsz
       include 'parameter.list'
       COMMON/CNSTNS/PI,CA,DEG,GCAIR,BIGNUM,BIGEXP                       tras 240
       COMMON /IFIL/IRD,IPR,IPU,NPR,IPR1                                 FLX  230
-      COMMON/CNTRL/KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                 loop 240
+      COMMON/CNTRL/CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                 loop 240
       COMMON /MODEL/ ZM(LAYDIM),PM(LAYDIM),TM(LAYDIM),dum(LAYDIM),
      1  DENSTY(65,LAYDIM),CLDAMT(LAYDIM),RRAMT(LAYDIM),EQLWC(LAYDIM),
      1  HAZEC(LAYDIM)
@@ -8548,6 +8579,10 @@ C        IF RANGE AND BETA BOTH ARE ZERO, CASE 2A                       pslc 540
      1    GASCON/8.31441E+7/,PLANK/6.626176E-27/,BOLTZ/1.380662E-16/,   aern 780
      2    CLIGHT/2.99792458E10/                                         aern 790
       data avms /28.966/ ,grav /980./,dyne /1000./ 
+      
+      integer :: ckmax
+      ckmax = kmax
+      
 C     avcon =  AVOGAD * dyne / (avms * grav * XLOSCH * .9988684 )
       avcon =  AVOGAD * dyne / (avms * grav * XLOSCH * .9961450)
       re = 6371.15
@@ -8686,10 +8721,14 @@ C                                                                       rdns 130
       COMMON /CARD1B/ JUNIT(15),WMOL(12),WAIR1,JLOW                     rdns 190
       COMMON /CARD2/ IHAZE,ISEASN,IVULCN,ICSTL,ICIR,IVSA,VIS,WSS,WHH,   rdns 200
      1    RAINRT                                                        rdns 210
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               rdns 220
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               rdns 220
       COMMON /NSINP/ ZMDL(40),P(40),T(40),WMDL(40,13)                   rdns 230
       CHARACTER*1 JCHAR                                                 rdns 240
-      DIMENSION  JCHAR(15)                                              rdns 250
+      DIMENSION  JCHAR(15)
+
+      integer :: ckmax
+      ckmax = kmax
+      
       IF(ML. GT. 24) THEN                                               rdns 260
          WRITE(IPR,900) ML                                              rdns 270
 900      FORMAT('  ML = ',I5,'  GT 24 ML RESET TO 24')                  rdns 280
@@ -11700,8 +11739,29 @@ C                                                                       sorc 750
 C     CONVERT W/M-2-MICRON TO W/CM-2-MICRON                             sorc 770
       IF(ISOURC. EQ. 1) SS = SS * FPHS * FALB * 2.04472E-7              sorc 780
       SS=SS*.0001                                                       sorc 790
-      RETURN                                                            sorc 800
-      END                                                               sorc 810
+
+      END
+      
+      
+      pure real function PFMOL(X)
+      real, intent(IN) :: X
+      
+      !     MOLECULAR AND HENYEY-GREENSTEIN PHASE FUNCTIONS                   
+C     NOTE; UNITS ARE (STER-1), X=COS(SCATTERING ANGLE)                 
+      PFMOL(X)=.06050402+.0572197*X**2                                  
+      
+      end function pfmol
+      
+       
+      pure real function PFHG(GG,X)
+      
+      real, intent(IN) :: GG,X
+      
+      PFHG(GG,X)=(1.0-GG**2)/(4.*PI*(1.0+GG**2-2.0*GG*X)**1.5)
+      
+      end function PFHG
+      
+      
       SUBROUTINE SSGEO(IERROR,IPH,IPARM,PARM1,PARM2,PARM3,PARM4,PSIPO,G,
 C    X MAXGEO)                                                          
      1  MAXGEO,MSOFF)                                                   
@@ -11754,7 +11814,7 @@ c
      1    RAINRT                                                        
       COMMON /CARD3/ H1,H2,ANGLE,RANGE,BETA,REE,LEN                     
 C     COMMON /CARD4/ V1,V2,DV                                           
-      COMMON /CNTRL/ KMAX,MM,IKMAX,NL,ML,IKLO,ISSGEO,IMULT              
+      COMMON /CNTRL/ CKMAX,MM,IKMAX,NL,ML,IKLO,ISSGEO,IMULT              
       COMMON /MODEL/ ZM(LAYDIM),PM(LAYDIM),TM(LAYDIM),RFNDX(LAYDIM),
      1  DENSTY(65,LAYDIM),CLDAMT(LAYDIM),RRAMT(LAYDIM),EQLWC(LAYDIM),
      1  HAZEC(LAYDIM)
@@ -11769,11 +11829,10 @@ C     COMMON /CARD4/ V1,V2,DV
      x AZ(LAYDIM+1),RHD(LAYDIM+1),PDUM(LAYTWO),WDUM(65)
 c
       dimension wpdumx(laythr,mmolx),wdumx(mmolx)
-c
-C     MOLECULAR AND HENYEY-GREENSTEIN PHASE FUNCTIONS                   
-C     NOTE; UNITS ARE (STER-1), X=COS(SCATTERING ANGLE)                 
-      PFMOL(X)=.06050402+.0572197*X**2                                  
-      PFHG(GG,X)=(1.0-GG**2)/(4.*PI*(1.0+GG**2-2.0*GG*X)**1.5)          
+
+      integer :: ckmax
+      ckmax = kmax
+         
       IKLO=1                                                            
       msoffx = 0                                                        
 C     NPR = 1                                                           
@@ -12450,7 +12509,7 @@ C     THIS ROUTINE FINDS THE TANGENT HEIGHT GIVEN CPATH (THE PATH CONSTAtanh 120
 C     SEE ATMOSPHERIC TRANSMITTANCE/RADIANCE:  LOWTRAN 6, AFGL-TR-83-018tanh 130
 C                                                                       tanh 140
       INTEGER IMAX, IMOD, IBMAX,IPATH, J,JMAX,                          tanh 150
-     $     KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                         tanh 160
+     $     M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT                         tanh 160
       REAL RE, DELTAS, ZMAX                                             tanh 170
       DOUBLE PRECISION CPATH,HTAN,RTBIS,H1,CP(laydim),R(laydim),        tanh 180
      $     X,RX,RATIO,X1,X2                                             tanh 190
@@ -12459,8 +12518,12 @@ C                                                                       tanh 200
       COMMON /MODEL/ ZM(LAYDIM),PM(LAYDIM),TM(LAYDIM),RFNDX(LAYDIM),
      1  DENSTY(65,LAYDIM),CLDAMT(LAYDIM),RRAMT(LAYDIM),EQLWC(LAYDIM),
      1  HAZEC(LAYDIM)
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               tanh 240
-C                                                                       tanh 250
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               tanh 240
+
+      integer :: ckmax
+      ckmax = kmax
+
+
       DO 100 J = 1, ML                                                  tanh 260
          R(J) = RE+ZM(J)                                                tanh 270
          X = ZM(J)                                                      tanh 280
@@ -12854,7 +12917,7 @@ C                                                                       vsa 2660
       COMMON IMSMX,WPATH(laythr,65),TBBY(laythr),PATM(laythr),NSPEC,   
      x KPOINT(12),ABSC(5,47),EXTC(5,47),ASYM(5,47),VX2(47),AWCCON(5)  
       COMMON /IFIL/IRD,IPR,IPU,NPR,IPR1,ISCRCH
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               vsam 160
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               vsam 160
       COMMON /CARD1/ MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRNT,TBOUND,SALB  vsam 170
      1  ,MODTRN                                                         vsam 180
       LOGICAL MODTRN                                                    vsam 190
@@ -12869,7 +12932,11 @@ C                                                                       vsam 250
       COMMON /MDATA1/ WNO(laydim),WSO2(laydim),WNO2(laydim),
      x WNH3(laydim),WAIR(laydim)    
       DIMENSION WMOL(13)                                                vsam 300
-C                                                                       vsam 310
+
+
+      integer :: ckmax
+      ckmax = kmax
+      
 C     OUTPUT COMMON MDATA AND MDATA1                                    vsam 320
 C                                                                       vsam 330
 C                                                                       vsam 340
@@ -13248,7 +13315,7 @@ C
 C**   IFIL CARRIES FILE INFORMATION
 C
       COMMON /IFIL/IRD,IPR,IPU,NPR,IPR1,ISCRCH
-      COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               driv 300
+      COMMON /CNTRL/ CKMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT               driv 300
       COMMON /CONSTN/ PZERO,TZERO,AVOGAD,ALOSMT,GASCON,PLANK,BOLTZ,
      1    CLIGHT,ADCON,ALZERO,AVMWT,AIRMWT,AMWT(35)
 C
@@ -13269,7 +13336,10 @@ cc   1    IMDIM,IBMAX,IBDIM,IOUTMX,IOUTDM,IPMAX,IPHMID,IPDIM,KDIM,
 cc   2    KMXNOM,NMOL
 C
       common /xpdem/ZX(laydim),DTMP(35),DENX(35,laydim)
-C
+
+      integer :: ckmax
+      ckmax = kmax
+      
       LX = 2
       immax = ml
       DO 200 L=1,IMMAX

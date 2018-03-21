@@ -67,9 +67,10 @@ C ... CALCULATE TRANSMITTANCE
       ELSE
           TTRANS=(1.-WSL/DV)**(DV*ODBAR)
       ENDIF
-C
-      RETURN
-      END
+
+      END SUBROUTINE BMTRAN
+      
+      
       FUNCTION    BMERFU(Y)
 C
 C ... APPROXIMATION FOR EXP(-Y*Y) + SQRT(PI) * Y * ERF(Y) - 1
@@ -85,8 +86,9 @@ C ... APPROXIMATION FOR EXP(-Y*Y) + SQRT(PI) * Y * ERF(Y) - 1
       ENDIF
       T=1./(1.+P*Y)
       BMERFU=(1.-Y*T*(A1+T*(A2+T*(A3+T*(A4+T*A5)))))*EXP(-Y*Y)+RTPI*Y-1.
-      RETURN
-      END
+
+      END function bmerfu
+      
       BLOCK DATA BO2C                                                   bo2c 100
 C>    BLOCK DATA                                                        bo2c 110
 C                                                                       bo2c 120
